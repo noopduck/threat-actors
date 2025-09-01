@@ -17,7 +17,7 @@ type Row struct {
 	NameURL          string   `json:"NameURL"`
 }
 
-// extractRow henter data ut fra én <tr>
+// extractRow extracts data from a tr
 func extractRow(tr *html.Node) *Row {
 	tds := []*html.Node{}
 	for c := tr.FirstChild; c != nil; c = c.NextSibling {
@@ -39,7 +39,7 @@ func extractRow(tr *html.Node) *Row {
 	nameText := getText(nameA)
 	nameHref := getAttr(nameA, "href")
 
-	// Associated groups (kan være flere <a>)
+	// Associated groups
 	var groups []string
 	for c := tds[2].FirstChild; c != nil; c = c.NextSibling {
 		if c.Type == html.ElementNode && c.Data == "a" {
@@ -60,7 +60,7 @@ func extractRow(tr *html.Node) *Row {
 	}
 }
 
-// hjelpefunksjoner
+// helper functions
 func getText(n *html.Node) string {
 	if n == nil {
 		return ""
@@ -99,8 +99,7 @@ func getAttr(n *html.Node, key string) string {
 	return ""
 }
 
-// ParseHTMLTable parses an HTML string and extracts data from all tables found within it.
-// It returns a slice of maps, where each map represents a row in the table with column headers as keys.
+// ParseHTMLTable parses an HTML string and extracts data from tables (MITRE ATT&CK Groups)
 func ParseHTMLTable(htmli string) string {
 	doc, err := html.Parse(strings.NewReader(htmli))
 	if err != nil {

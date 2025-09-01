@@ -1,0 +1,130 @@
+// Package parser is a fantastic html table parser
+package parser
+
+import (
+	"encoding/json"
+	"strings"
+
+	"golang.org/x/net/html"
+)
+
+type Row struct {
+	ID               string   `json:"ID"`
+	Name             string   `json:"Name"`
+	AssociatedGroups []string `json:"AssociatedGroups"`
+	Description      string   `json:"Description"`
+	IDURL            string   `json:"IDURL"`
+	NameURL          string   `json:"NameURL"`
+}
+
+// extractRow henter data ut fra én <tr>
+func extractRow(tr *html.Node) *Row {
+	tds := []*html.Node{}
+	for c := tr.FirstChild; c != nil; c = c.NextSibling {
+		if c.Type == html.ElementNode && c.Data == "td" {
+			tds = append(tds, c)
+		}
+	}
+	if len(tds) < 4 {
+		return nil
+	}
+
+	// ID
+	idA := findFirstElement(tds[0], "a")
+	idText := getText(idA)
+	idHref := getAttr(idA, "href")
+
+	// Name
+	nameA := findFirstElement(tds[1], "a")
+	nameText := getText(nameA)
+	nameHref := getAttr(nameA, "href")
+
+	// Associated groups (kan være flere <a>)
+	var groups []string
+	for c := tds[2].FirstChild; c != nil; c = c.NextSibling {
+		if c.Type == html.ElementNode && c.Data == "a" {
+			groups = append(groups, strings.TrimSpace(getText(c)))
+		}
+	}
+
+	// Description (plain text)
+	desc := strings.Join(strings.Fields(getText(tds[3])), " ")
+
+	return &Row{
+		ID:               strings.TrimSpace(idText),
+		Name:             strings.TrimSpace(nameText),
+		AssociatedGroups: groups,
+		Description:      desc,
+		IDURL:            idHref,
+		NameURL:          nameHref,
+	}
+}
+
+// hjelpefunksjoner
+func getText(n *html.Node) string {
+	if n == nil {
+		return ""
+	}
+	if n.Type == html.TextNode {
+		return n.Data
+	}
+	var out string
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		out += getText(c)
+	}
+	return out
+}
+
+func findFirstElement(n *html.Node, tag string) *html.Node {
+	if n == nil {
+		return nil
+	}
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		if c.Type == html.ElementNode && c.Data == tag {
+			return c
+		}
+	}
+	return nil
+}
+
+func getAttr(n *html.Node, key string) string {
+	if n == nil {
+		return ""
+	}
+	for _, a := range n.Attr {
+		if a.Key == key {
+			return a.Val
+		}
+	}
+	return ""
+}
+
+// ParseHTMLTable parses an HTML string and extracts data from all tables found within it.
+// It returns a slice of maps, where each map represents a row in the table with column headers as keys.
+func ParseHTMLTable(htmli string) string {
+	doc, err := html.Parse(strings.NewReader(htmli))
+	if err != nil {
+		println("Error parsing HTML:", err)
+		return ""
+	}
+
+	var rows []Row
+	// Finn tbody/tr
+	var traverse func(*html.Node)
+	traverse = func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "tr" {
+			row := extractRow(n)
+			if row != nil {
+				rows = append(rows, *row)
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			traverse(c)
+		}
+	}
+	traverse(doc)
+
+	out, _ := json.MarshalIndent(rows, "", "  ")
+
+	return string(out)
+}

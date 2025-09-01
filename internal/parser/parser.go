@@ -40,12 +40,8 @@ func extractRow(tr *html.Node) *Row {
 	nameHref := getAttr(nameA, "href")
 
 	// Associated groups
-	var groups []string
-	for c := tds[2].FirstChild; c != nil; c = c.NextSibling {
-		if c.Type == html.ElementNode && c.Data == "a" {
-			groups = append(groups, strings.TrimSpace(getText(c)))
-		}
-	}
+	associatedGroups := strings.Join(strings.Fields(getText(tds[2])), " ")
+
 
 	// Description (plain text)
 	desc := strings.Join(strings.Fields(getText(tds[3])), " ")
@@ -53,7 +49,7 @@ func extractRow(tr *html.Node) *Row {
 	return &Row{
 		ID:               strings.TrimSpace(idText),
 		Name:             strings.TrimSpace(nameText),
-		AssociatedGroups: groups,
+		AssociatedGroups: associatedGroups,
 		Description:      desc,
 		IDURL:            idHref,
 		NameURL:          nameHref,

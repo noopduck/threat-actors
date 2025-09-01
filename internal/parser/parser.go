@@ -9,12 +9,12 @@ import (
 )
 
 type Row struct {
-	ID               string   `json:"ID"`
-	Name             string   `json:"Name"`
-	AssociatedGroups []string `json:"AssociatedGroups"`
-	Description      string   `json:"Description"`
-	IDURL            string   `json:"IDURL"`
-	NameURL          string   `json:"NameURL"`
+	ID               string `json:"ID"`
+	Name             string `json:"Name"`
+	AssociatedGroups string `json:"AssociatedGroups"`
+	Description      string `json:"Description"`
+	IDURL            string `json:"IDURL"`
+	NameURL          string `json:"NameURL"`
 }
 
 // extractRow extracts data from a tr
@@ -41,7 +41,6 @@ func extractRow(tr *html.Node) *Row {
 
 	// Associated groups
 	associatedGroups := strings.Join(strings.Fields(getText(tds[2])), " ")
-
 
 	// Description (plain text)
 	desc := strings.Join(strings.Fields(getText(tds[3])), " ")

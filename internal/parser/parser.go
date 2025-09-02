@@ -99,7 +99,7 @@ func ParseHTMLTable(htmli string) []byte {
 	doc, err := html.Parse(strings.NewReader(htmli))
 	if err != nil {
 		println("Error parsing HTML:", err)
-		return ""
+		return nil
 	}
 
 	var rows []Row

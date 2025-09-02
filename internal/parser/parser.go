@@ -18,12 +18,12 @@ type Row struct {
 }
 
 type DetailsRow struct {
-	ID               string `json:"ID"`
-	Name             string `json:"Name"`
-	AssociatedGroups string `json:"AssociatedGroups"`
-	Description      string `json:"Description"`
-	IDURL            string `json:"IDURL"`
-	NameURL          string `json:"NameURL"`
+	Domain  string `json:"Domain"`
+	ID      string `json:"ID"`
+	Name    string `json:"Name"`
+	Use     string `json:"Use"`
+	IDURL   string `json:"IDURL"`
+	NameURL string `json:"NameURL"`
 }
 
 // extractRow extracts data from a tr
@@ -61,6 +61,43 @@ func extractRow(tr *html.Node) *Row {
 		Description:      desc,
 		IDURL:            idHref,
 		NameURL:          nameHref,
+	}
+}
+
+func extractDetailRow(tr *html.Node) *DetailsRow {
+	tds := []*html.Node{}
+	for c := tr.FirstChild; c != nil; c = c.NextSibling {
+		if c.Type == html.ElementNode && c.Data == "td" {
+			tds = append(tds, c)
+		}
+	}
+	if len(tds) < 4 {
+		return nil
+	}
+
+	// ID
+	domain := findFirstElement(tds[0], "a")
+	domainText := getText(domain)
+	domainHref := getAttr(domain, "href")
+
+	// Name
+	id := findFirstElement(tds[1], "a")
+	idText := getText(id)
+	idHref := getAttr(id, "href")
+
+	// Associated groups
+	name := strings.Join(strings.Fields(getText(tds[2])), " ")
+
+	// Description (plain text)
+	use := strings.Join(strings.Fields(getText(tds[3])), " ")
+
+	return &DetailsRow{
+		Domain:  strings.TrimSpace(domainText),
+		ID:      strings.TrimSpace(idText),
+		Name:    name,
+		Use:     use,
+		IDURL:   idHref,
+		NameURL: domainHref,
 	}
 }
 
@@ -111,7 +148,7 @@ func ParseHTMLTable[T any](htmli string) []byte {
 		return nil
 	}
 
-	var rows []T
+	var rows []T = make([]T, 0)
 
 	// Find tbody's tr
 	var traverse func(*html.Node)

@@ -35,7 +35,7 @@ func apiHandler(w http.ResponseWriter, request *http.Request) {
 func mitreThreatGroupsHandler(w http.ResponseWriter, request *http.Request) {
 	rawDocument := webclient.GetGroups()
 
-	parsedDocument := parser.ParseHTMLTable[parser.Row](rawDocument)
+	parsedDocument := parser.ParseHTMLTable(rawDocument, parser.ExtractRow)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(parsedDocument))
@@ -46,7 +46,7 @@ func mitreThreatGroupDetailsHandler(w http.ResponseWriter, request *http.Request
 
 	rawDocument := webclient.GetGroup(group)
 
-	parsedDocument := parser.ParseHTMLTable[parser.DetailsRow](rawDocument)
+	parsedDocument := parser.ParseHTMLTable(rawDocument, parser.ExtractDetailRow)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(parsedDocument)
@@ -57,7 +57,7 @@ func mitreThreatGroupSearchHandler(w http.ResponseWriter, request *http.Request)
 
 	rawDocument := webclient.GetGroups()
 
-	parsedDocument := parser.ParseHTMLTable[parser.Row](rawDocument)
+	parsedDocument := parser.ParseHTMLTable(rawDocument, parser.ExtractRow)
 
 	var parsedDocumentJSON []parser.Row
 	err := json.Unmarshal(parsedDocument, &parsedDocumentJSON)

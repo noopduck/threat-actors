@@ -27,7 +27,7 @@ type DetailsRow struct {
 }
 
 // extractRow extracts data from a tr
-func extractRow(tr *html.Node) *Row {
+func ExtractRow(tr *html.Node) *Row {
 	tds := []*html.Node{}
 	for c := tr.FirstChild; c != nil; c = c.NextSibling {
 		if c.Type == html.ElementNode && c.Data == "td" {
@@ -64,7 +64,7 @@ func extractRow(tr *html.Node) *Row {
 	}
 }
 
-func extractDetailRow(tr *html.Node) *DetailsRow {
+func ExtractDetailRow(tr *html.Node) *DetailsRow {
 	tds := []*html.Node{}
 	for c := tr.FirstChild; c != nil; c = c.NextSibling {
 		if c.Type == html.ElementNode && c.Data == "td" {
@@ -141,7 +141,7 @@ func getAttr(n *html.Node, key string) string {
 }
 
 // ParseHTMLTable parses an HTML string and extracts data from tables (MITRE ATT&CK Groups)
-func ParseHTMLTable[T any](htmli string) []byte {
+func ParseHTMLTable[T any](htmli string, extractor func(*html.Node) *T) []byte {
 	doc, err := html.Parse(strings.NewReader(htmli))
 	if err != nil {
 		println("Error parsing HTML:", err)
@@ -154,7 +154,7 @@ func ParseHTMLTable[T any](htmli string) []byte {
 	var traverse func(*html.Node)
 	traverse = func(n *html.Node) {
 		if n.Type == html.ElementNode && n.Data == "tr" {
-			row := extractRow(n)
+			row := extractor(n)
 			if row != nil {
 				rows = append(rows, *row)
 			}

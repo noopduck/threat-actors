@@ -17,6 +17,15 @@ type Row struct {
 	NameURL          string `json:"NameURL"`
 }
 
+type DetailsRow struct {
+	ID               string `json:"ID"`
+	Name             string `json:"Name"`
+	AssociatedGroups string `json:"AssociatedGroups"`
+	Description      string `json:"Description"`
+	IDURL            string `json:"IDURL"`
+	NameURL          string `json:"NameURL"`
+}
+
 // extractRow extracts data from a tr
 func extractRow(tr *html.Node) *Row {
 	tds := []*html.Node{}
@@ -95,14 +104,15 @@ func getAttr(n *html.Node, key string) string {
 }
 
 // ParseHTMLTable parses an HTML string and extracts data from tables (MITRE ATT&CK Groups)
-func ParseHTMLTable(htmli string) []byte {
+func ParseHTMLTable[T any](htmli string) []byte {
 	doc, err := html.Parse(strings.NewReader(htmli))
 	if err != nil {
 		println("Error parsing HTML:", err)
 		return nil
 	}
 
-	var rows []Row
+	var rows []T
+
 	// Find tbody's tr
 	var traverse func(*html.Node)
 	traverse = func(n *html.Node) {

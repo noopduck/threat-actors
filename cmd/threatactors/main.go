@@ -9,10 +9,33 @@ import (
 	"threatactors/internal/webclient"
 )
 
+func apiHandler(w http.ResponseWriter, request *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	help := `
+	[
+  	{
+  		"METHOD": "GET",
+  		"endpoint": "mitreThreatGroups"
+  	},
+  	{
+  		"METHOD": "GET",
+  		"endpoint": "mitreThreatGroupDetails,
+  		"query": "group=G0000"
+  	}, 
+  	{
+  		"METHOD": "GET",
+  		"endpoint": "mitreThreatGroupSearch",
+  		"query": "searchTerm=word"
+  	}
+	]`
+
+	w.Write([]byte(help))
+}
+
 func mitreThreatGroupsHandler(w http.ResponseWriter, request *http.Request) {
 	rawDocument := webclient.GetGroups()
 
-	parsedDocument := parser.ParseHTMLTable(rawDocument)
+	parsedDocument := parser.ParseHTMLTable[parser.Row](rawDocument)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(parsedDocument))
@@ -23,7 +46,7 @@ func mitreThreatGroupDetailsHandler(w http.ResponseWriter, request *http.Request
 
 	rawDocument := webclient.GetGroup(group)
 
-	parsedDocument := parser.ParseHTMLTable(rawDocument)
+	parsedDocument := parser.ParseHTMLTable[parser.DetailsRow](rawDocument)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(parsedDocument)
@@ -34,7 +57,7 @@ func mitreThreatGroupSearchHandler(w http.ResponseWriter, request *http.Request)
 
 	rawDocument := webclient.GetGroups()
 
-	parsedDocument := parser.ParseHTMLTable(rawDocument)
+	parsedDocument := parser.ParseHTMLTable[parser.Row](rawDocument)
 
 	var parsedDocumentJSON []parser.Row
 	err := json.Unmarshal(parsedDocument, &parsedDocumentJSON)
@@ -64,6 +87,7 @@ func mitreThreatGroupSearchHandler(w http.ResponseWriter, request *http.Request)
 }
 
 func startAPI() {
+	http.HandleFunc("/", apiHandler)
 	http.HandleFunc("/mitreThreatGroups", mitreThreatGroupsHandler)
 	http.HandleFunc("/mitreThreatGroupDetails", mitreThreatGroupDetailsHandler)
 	http.HandleFunc("/mitreThreatGroupSearch", mitreThreatGroupSearchHandler)

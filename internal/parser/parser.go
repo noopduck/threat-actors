@@ -95,7 +95,7 @@ func getAttr(n *html.Node, key string) string {
 }
 
 // ParseHTMLTable parses an HTML string and extracts data from tables (MITRE ATT&CK Groups)
-func ParseHTMLTable(htmli string) string {
+func ParseHTMLTable(htmli string) []byte {
 	doc, err := html.Parse(strings.NewReader(htmli))
 	if err != nil {
 		println("Error parsing HTML:", err)
@@ -120,5 +120,5 @@ func ParseHTMLTable(htmli string) string {
 
 	out, _ := json.MarshalIndent(rows, "", "  ")
 
-	return string(out)
+	return out
 }

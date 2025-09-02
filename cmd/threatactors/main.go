@@ -18,6 +18,17 @@ func mitreThreatGroupsHandler(w http.ResponseWriter, request *http.Request) {
 	w.Write([]byte(parsedDocument))
 }
 
+func mitreThreatGroupDetailsHandler(w http.ResponseWriter, request *http.Request) {
+	group := request.URL.Query().Get("group")
+
+	rawDocument := webclient.GetGroup(group)
+
+	parsedDocument := parser.ParseHTMLTable(rawDocument)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(parsedDocument)
+}
+
 func mitreThreatGroupSearchHandler(w http.ResponseWriter, request *http.Request) {
 	searchTerm := strings.ToLower(request.URL.Query().Get("searchTerm"))
 
@@ -53,7 +64,8 @@ func mitreThreatGroupSearchHandler(w http.ResponseWriter, request *http.Request)
 }
 
 func startAPI() {
-	http.HandleFunc("/mitreThreatGroup", mitreThreatGroupsHandler)
+	http.HandleFunc("/mitreThreatGroups", mitreThreatGroupsHandler)
+	http.HandleFunc("/mitreThreatGroupDetails", mitreThreatGroupDetailsHandler)
 	http.HandleFunc("/mitreThreatGroupSearch", mitreThreatGroupSearchHandler)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {

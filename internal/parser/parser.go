@@ -103,7 +103,7 @@ func ParseHTMLTable(htmli string) []byte {
 	}
 
 	var rows []Row
-	// Finn tbody/tr
+	// Find tbody's tr
 	var traverse func(*html.Node)
 	traverse = func(n *html.Node) {
 		if n.Type == html.ElementNode && n.Data == "tr" {

@@ -39,14 +39,14 @@ func ExtractRow(tr *html.Node) *Row {
 	}
 
 	// ID
-	idA := findFirstElement(tds[0], "a")
-	idText := getText(idA)
-	idHref := getAttr(idA, "href")
+	id := findFirstElement(tds[0], "a")
+	idText := getText(id)
+	idHref := getAttr(id, "href")
 
 	// Name
-	nameA := findFirstElement(tds[1], "a")
-	nameText := getText(nameA)
-	nameHref := getAttr(nameA, "href")
+	name := findFirstElement(tds[1], "a")
+	nameText := getText(name)
+	nameHref := getAttr(name, "href")
 
 	// Associated groups
 	associatedGroups := strings.Join(strings.Fields(getText(tds[2])), " ")

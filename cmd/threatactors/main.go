@@ -13,21 +13,21 @@ func apiHandler(w http.ResponseWriter, request *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	help := `
 	[
-  	{
-  		"METHOD": "GET",
-  		"endpoint": "mitreThreatGroups"
-  	}
-  	{
-  		"METHOD": "GET",
-  		"endpoint": "mitreThreatGroupDetails,
-  		"query": "group=G0000"
-  	}
-  	{
-  		"METHOD": "GET",
-  		"endpoint": "mitreThreatGroupSearch",
-  		"query": "searchTerm=word"
-  	}
-	]`
+  {
+    "METHOD": "GET",
+    "endpoint": "mitreThreatGroups"
+  },
+  {
+    "METHOD": "GET",
+    "endpoint": "mitreThreatGroupDetails",
+    "query": "group=G0000"
+  },
+  {
+    "METHOD": "GET",
+    "endpoint": "mitreThreatGroupSearch",
+    "query": "searchTerm=word"
+  }
+  ]`
 
 	w.Write([]byte(help))
 }

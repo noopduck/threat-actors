@@ -16,12 +16,12 @@ func apiHandler(w http.ResponseWriter, request *http.Request) {
   	{
   		"METHOD": "GET",
   		"endpoint": "mitreThreatGroups"
-  	},
+  	}
   	{
   		"METHOD": "GET",
   		"endpoint": "mitreThreatGroupDetails,
   		"query": "group=G0000"
-  	}, 
+  	}
   	{
   		"METHOD": "GET",
   		"endpoint": "mitreThreatGroupSearch",

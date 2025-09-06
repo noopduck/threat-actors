@@ -75,20 +75,19 @@ func ExtractDetailRow(tr *html.Node) *DetailsRow {
 		return nil
 	}
 
-	// ID
-	domain := findFirstElement(tds[0], "a")
-	domainText := getText(domain)
-	domainHref := getAttr(domain, "href")
+	// Domain
+	domainText := getText(tds[0])
+	domainHref := getAttr(tds[0], "href")
 
-	// Name
+	// Id
 	id := findFirstElement(tds[1], "a")
 	idText := getText(id)
 	idHref := getAttr(id, "href")
 
-	// Associated groups
+	// Name
 	name := strings.Join(strings.Fields(getText(tds[2])), " ")
 
-	// Description (plain text)
+	// Use
 	use := strings.Join(strings.Fields(getText(tds[3])), " ")
 
 	return &DetailsRow{

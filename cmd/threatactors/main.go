@@ -14,15 +14,24 @@ func apiHandler(w http.ResponseWriter, request *http.Request) {
 	help := `
 	[
   {
+		"COMMENT": ""
     "METHOD": "GET",
     "endpoint": "mitreThreatGroups"
   },
   {
+		"COMMENT": ""
     "METHOD": "GET",
     "endpoint": "mitreThreatGroupDetails",
     "query": "group=G0000"
   },
   {
+		"COMMENT": "This retreives the raw JSON object directly from mitre."
+    "METHOD": "GET",
+    "endpoint": "mitreThreatGroupDetailsJSON",
+    "query": "group=G0000"
+  },
+  {
+		"COMMENT": ""
     "METHOD": "GET",
     "endpoint": "mitreThreatGroupSearch",
     "query": "searchTerm=word"
@@ -50,6 +59,15 @@ func mitreThreatGroupDetailsHandler(w http.ResponseWriter, request *http.Request
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(parsedDocument)
+}
+
+func mitreThreatGroupDetailsJSONHandler(w http.ResponseWriter, request *http.Request) {
+	group := request.URL.Query().Get("group")
+
+	rawDocument := webclient.GetGroupJson(group)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(rawDocument))
 }
 
 func mitreThreatGroupSearchHandler(w http.ResponseWriter, request *http.Request) {
@@ -90,6 +108,7 @@ func startAPI() {
 	http.HandleFunc("/", apiHandler)
 	http.HandleFunc("/mitreThreatGroups", mitreThreatGroupsHandler)
 	http.HandleFunc("/mitreThreatGroupDetails", mitreThreatGroupDetailsHandler)
+	http.HandleFunc("/mitreThreatGroupDetailsJSON", mitreThreatGroupDetailsJSONHandler)
 	http.HandleFunc("/mitreThreatGroupSearch", mitreThreatGroupSearchHandler)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {

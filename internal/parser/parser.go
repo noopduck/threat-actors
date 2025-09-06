@@ -18,12 +18,11 @@ type Row struct {
 }
 
 type DetailsRow struct {
-	Domain  string `json:"Domain"`
-	ID      string `json:"ID"`
-	Name    string `json:"Name"`
-	Use     string `json:"Use"`
-	IDURL   string `json:"IDURL"`
-	NameURL string `json:"NameURL"`
+	Domain string `json:"Domain"`
+	ID     string `json:"ID"`
+	Name   string `json:"Name"`
+	Use    string `json:"Use"`
+	IDURL  string `json:"IDURL"`
 }
 
 // extractRow extracts data from a tr
@@ -65,6 +64,9 @@ func ExtractRow(tr *html.Node) *Row {
 }
 
 func ExtractDetailRow(tr *html.Node) *DetailsRow {
+
+	//https://attack.mitre.org/groups/G1030/G1030-enterprise-layer.json
+
 	tds := []*html.Node{}
 	for c := tr.FirstChild; c != nil; c = c.NextSibling {
 		if c.Type == html.ElementNode && c.Data == "td" {
@@ -77,7 +79,6 @@ func ExtractDetailRow(tr *html.Node) *DetailsRow {
 
 	// Domain
 	domainText := getText(tds[0])
-	domainHref := getAttr(tds[0], "href")
 
 	// Id
 	id := findFirstElement(tds[1], "a")
@@ -91,12 +92,11 @@ func ExtractDetailRow(tr *html.Node) *DetailsRow {
 	use := strings.Join(strings.Fields(getText(tds[3])), " ")
 
 	return &DetailsRow{
-		Domain:  strings.TrimSpace(domainText),
-		ID:      strings.TrimSpace(idText),
-		Name:    name,
-		Use:     use,
-		IDURL:   idHref,
-		NameURL: domainHref,
+		Domain: strings.TrimSpace(domainText),
+		ID:     strings.TrimSpace(idText),
+		Name:   name,
+		Use:    use,
+		IDURL:  idHref,
 	}
 }
 

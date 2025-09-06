@@ -39,3 +39,9 @@ func GetGroup(group string) string {
 	body := GetPage("https://attack.mitre.org/groups/", &group)
 	return body
 }
+
+func GetGroupJson(group string) string {
+	group = group + "/" + group + "-enterprise-layer.json"
+	body := GetPage("https://attack.mitre.org/groups/", &group)
+	return body
+}

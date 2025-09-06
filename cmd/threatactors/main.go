@@ -14,24 +14,24 @@ func apiHandler(w http.ResponseWriter, request *http.Request) {
 	help := `
 	[
   {
-		"COMMENT": ""
+    "COMMENT": ""
     "METHOD": "GET",
     "endpoint": "mitreThreatGroups"
   },
   {
-		"COMMENT": ""
+    "COMMENT": ""
     "METHOD": "GET",
     "endpoint": "mitreThreatGroupDetails",
     "query": "group=G0000"
   },
   {
-		"COMMENT": "This retreives the raw JSON object directly from mitre."
+    "COMMENT": "This retreives the raw JSON object directly from mitre."
     "METHOD": "GET",
     "endpoint": "mitreThreatGroupDetailsJSON",
     "query": "group=G0000"
   },
   {
-		"COMMENT": ""
+    "COMMENT": ""
     "METHOD": "GET",
     "endpoint": "mitreThreatGroupSearch",
     "query": "searchTerm=word"

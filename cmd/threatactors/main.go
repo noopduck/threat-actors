@@ -50,17 +50,6 @@ func mitreThreatGroupsHandler(w http.ResponseWriter, request *http.Request) {
 	w.Write([]byte(parsedDocument))
 }
 
-func mitreThreatGroupDetailsHandler(w http.ResponseWriter, request *http.Request) {
-	group := request.URL.Query().Get("group")
-
-	rawDocument := webclient.GetGroup(group)
-
-	parsedDocument := parser.ParseHTMLTable(rawDocument, parser.ExtractDetailRow)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(parsedDocument)
-}
-
 func mitreThreatGroupDetailsJSONHandler(w http.ResponseWriter, request *http.Request) {
 	group := request.URL.Query().Get("group")
 
@@ -107,7 +96,6 @@ func mitreThreatGroupSearchHandler(w http.ResponseWriter, request *http.Request)
 func startAPI() {
 	http.HandleFunc("/", apiHandler)
 	http.HandleFunc("/mitreThreatGroups", mitreThreatGroupsHandler)
-	http.HandleFunc("/mitreThreatGroupDetails", mitreThreatGroupDetailsHandler)
 	http.HandleFunc("/mitreThreatGroupDetailsJSON", mitreThreatGroupDetailsJSONHandler)
 	http.HandleFunc("/mitreThreatGroupSearch", mitreThreatGroupSearchHandler)
 

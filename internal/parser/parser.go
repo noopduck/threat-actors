@@ -63,43 +63,6 @@ func ExtractRow(tr *html.Node) *Row {
 	}
 }
 
-func ExtractDetailRow(tr *html.Node) *DetailsRow {
-
-	//https://attack.mitre.org/groups/G1030/G1030-enterprise-layer.json
-
-	tds := []*html.Node{}
-	for c := tr.FirstChild; c != nil; c = c.NextSibling {
-		if c.Type == html.ElementNode && c.Data == "td" {
-			tds = append(tds, c)
-		}
-	}
-	if len(tds) < 4 {
-		return nil
-	}
-
-	// Domain
-	domainText := getText(tds[0])
-
-	// Id
-	id := findFirstElement(tds[1], "a")
-	idText := getText(id)
-	idHref := getAttr(id, "href")
-
-	// Name
-	name := strings.Join(strings.Fields(getText(tds[2])), " ")
-
-	// Use
-	use := strings.Join(strings.Fields(getText(tds[3])), " ")
-
-	return &DetailsRow{
-		Domain: strings.TrimSpace(domainText),
-		ID:     strings.TrimSpace(idText),
-		Name:   name,
-		Use:    use,
-		IDURL:  idHref,
-	}
-}
-
 // helper functions
 func getText(n *html.Node) string {
 	if n == nil {

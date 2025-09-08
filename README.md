@@ -52,7 +52,7 @@ go.mod, go.sum            # Go module files
 - `GET /mitreThreatGroupDetails?group=G0000`  
 	Returns details for a specific group (replace `G0000` with the desired group ID).
 
-- `GET /mitreThreatGroupSearch?searchTerm=word`  
+- `GET /mitreThreatGroupSearch?search=word`  
 	Searches threat groups by keyword.
 
 ### Example Request

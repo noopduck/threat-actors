@@ -52,11 +52,17 @@ func mitreThreatGroupsHandler(w http.ResponseWriter, request *http.Request) {
 
 func mitreThreatGroupDetailsJSONHandler(w http.ResponseWriter, request *http.Request) {
 	group := request.URL.Query().Get("group")
+	
+	match, _ := regexp.MatchString("G\\d{4}$", group)
+	if match {
+	  rawDocument := webclient.GetGroupJson(group)
 
-	rawDocument := webclient.GetGroupJson(group)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(rawDocument))
+	  w.Header().Set("Content-Type", "application/json")
+	  w.Write([]byte(rawDocument))
+	} else {
+	  w.Header().Set("Content-Type", "html/text")
+	  w.Write([]byte("Incorrect input: " + group))
+	}
 }
 
 func mitreThreatGroupSearchHandler(w http.ResponseWriter, request *http.Request) {
